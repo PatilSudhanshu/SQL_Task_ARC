@@ -32,3 +32,33 @@ offset (2 - 1) * 10;
 ----from 11 to 20.
 
 ----------------------------------------
+
+
+CREATE OR REPLACE FUNCTION get_students_page(
+    page_size INT,
+    page_number INT
+)
+RETURNS TABLE (
+    student_id INT,
+    student_name VARCHAR(30),
+    age INT,
+    gender VARCHAR(10),
+    major VARCHAR(50)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        S.student_id, S.student_name, S.age, S.gender, S.major
+    FROM 
+        student_details S
+    ORDER BY 
+        S.student_id
+    LIMIT 
+        page_size
+    OFFSET 
+        (page_number - 1) * page_size;
+END $$ LANGUAGE plpgsql;
+
+SELECT * FROM get_students_page(10, 2);
+
+SELECT * FROM STUDENT_DETAILS;
